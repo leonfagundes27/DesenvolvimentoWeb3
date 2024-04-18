@@ -53,22 +53,19 @@ app.post('/addcurso', (req, res) => {
     res.send('Curso adicionado com sucesso.');
 })
 
-//put
-app.put('/', (req, res) => {
-    const index = veiculos.findIndex(x => x.id == req.query.id);
-    veiculos[index] = {id: req.query.id, name: req.body.name}
-    res.send(JSON.stringify(veiculos))
+//PUT para alterar os dados de um aluno através do RA inclusive o CURSO
+app.put('/alterarDados', (req, res) => {
+    alterarAlunoPeloRa(req.body.ra, req.body.campo, req.body.novoDado);
+    res.send(JSON.stringify(listaAlunos));
 })
 
-//delete
-app.delete('/', (req, res) => {
-    const index = veiculos.findIndex(x => x.id == req.query.id);
-    veiculos.splice(index, 1);
-    res.send(JSON.stringify(veiculos))
+app.delete('/removerAluno', (req, res) => {
+    removerAluno(req.body.ra);
+    res.send(JSON.stringify(listaAlunos));
 })
-  
+
 //listen
-app.listen(port, () => {
+app.listen(3000, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
@@ -97,7 +94,18 @@ function addCursoAoAluno(ra, curso) {
 function alterarAlunoPeloRa(ra, campo, novoDado) {
     let aluno = buscarAluno(ra);
     if(aluno) {
-        aluno[campo] = novoDado;
+        switch (campo.toUpperCase()) {
+            case 'NOME':
+                aluno.nome = novoDado; break
+            case 'RA':
+                aluno.ra = novoDado; break
+            case 'CURSO':
+                aluno.curso = novoDado; break
+            case 'TURMA':
+                aluno.turma = novoDado; break
+        }
+        index = listaAlunos.indexOf(aluno)
+        listaAlunos[index] = aluno;
     }
 }
 
